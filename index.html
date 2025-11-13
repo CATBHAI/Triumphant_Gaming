@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Triumphant Tournament — Real-time Auction</title>
+  <style>
+    :root{--bg:#071022;--card:#071827;--muted:#9aa7bd;--accent:#7c3aed;--glass:rgba(255,255,255,0.03);--success:#16a34a;--danger:#ef4444}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef8;background:linear-gradient(180deg,#051023 0%,#071227 70%);padding:18px}
+    .app{max-width:1150px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    h1{margin:0;font-size:20px}
+    .subtitle{color:var(--muted);font-size:13px}
+
+    .main{display:grid;grid-template-columns:300px 1fr 320px;gap:16px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.6)}
+
+    .players{max-height:720px;overflow:auto;padding-right:6px}
+    .player{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;margin-bottom:8px;background:var(--glass);cursor:pointer}
+    .player[data-sold='true']{opacity:0.5}
+    .avatar{width:44px;height:44;border-radius:8px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .pmeta{font-size:13px;color:var(--muted)}
+
+    .auction-top{display:flex;gap:12px;align-items:flex-start}
+    .auction-panel{flex:1}
+    .bigprice{font-size:28px;font-weight:700}
+    .timer{font-family:monospace;background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px}
+    .controls{display:flex;gap:8px;margin-top:8px}
+    button{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit;padding:8px 10px;border-radius:8px;cursor:pointer}
+    button.primary{background:linear-gradient(90deg,var(--accent),#06b6d4);border:none}
+
+    .quick-bids{display:flex;gap:8px;margin-top:8px}
+    input[type=number]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+
+    .teams{display:flex;flex-direction:column;gap:8px}
+    .team{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
+    .team .credit{margin-left:auto;font-weight:700}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px}
+    th{color:var(--muted);}
+
+    .log{max-height:220px;overflow:auto;padding-top:6px}
+    .footer-note{font-size:13px;color:var(--muted);margin-top:10px}
+
+    @media (max-width:1100px){.main{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="app card">
+    <header>
+      <div>
+        <h1>Triumphant Tournament — Auction Dashboard</h1>
+        <div class="subtitle">Tier-wise auction wheel for random player selection, 1 player per tier per captain, Tier 2 captains excluded</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="export-csv">Export CSV Results</button>
+        <button id="finalize-unsold">Mark Unsold & Apply Penalties</button>
+        <button id="undo-action">Undo Last Sale</button>
+        <button id="reset-all">Reset All</button>
+      </div>
+    </header>
+
+    <div class="main" style="margin-top:12px">
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Players</h3>
+        <div style="margin-bottom:8px">
+          <label class="pmeta">Filter by Tier:</label>
+          <select id="tier-filter">
+            <option value="all">All</option>
+            <option value="Tier 1">Tier 1</option>
+            <option value="Tier 3">Tier 3</option>
+            <option value="Tier 4">Tier 4</option>
+            <option value="Tier 5">Tier 5</option>
+          </select>
+          <button id="wheel-spin">Spin Wheel</button>
+        </div>
+        <div class="players" id="players-list"></div>
+        <div class="footer-note">Tier 2 captains are excluded from auction list.</div>
+      </div>
+
+      <div class="card">
+        <div class="auction-top">
+          <div class="auction-panel">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div>
+                <div id="selected-name" style="font-weight:700">— Select player —</div>
+                <div id="selected-tier" class="pmeta"></div>
+              </div>
+              <div class="bigprice" id="selected-price">₹0</div>
+              <div class="timer" id="countdown">00:15</div>
+            </div>
+
+            <div class="controls">
+              <button id="start-btn" class="primary">Start Auction</button>
+              <button id="pause-btn">Pause</button>
+              <button id="sell-btn">Sell to Highest</button>
+              <button id="mark-unsold">Mark Unsold</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_PLAYERS = [
+      {name:'Digonto', tier:'Tier 1'}, {name:'Anik', tier:'Tier 1'}, {name:'H Rafi', tier:'Tier 1'}, {name:'Salty', tier:'Tier 1'},
+      {name:'Amit', tier:'Tier 3'}, {name:'Moon', tier:'Tier 3'}, {name:'Joy', tier:'Tier 3'}, {name:'Naif', tier:'Tier 3'},
+      {name:'Rafi', tier:'Tier 4'}, {name:'Swaccho', tier:'Tier 4'}, {name:'Rhaiyan', tier:'Tier 4'}, {name:'Rizwan', tier:'Tier 4'},
+      {name:'Tama', tier:'Tier 5'}, {name:'Semanto', tier:'Tier 5'}, {name:'Nafi', tier:'Tier 5'}, {name:'Hridoy', tier:'Tier 5'}
+    ];
+
+    const playersListEl = document.getElementById('players-list');
+    const tierFilterEl = document.getElementById('tier-filter');
+    const wheelSpinBtn = document.getElementById('wheel-spin');
+    let selectedPlayerId = null;
+
+    function renderPlayers(){
+      const filter = tierFilterEl.value;
+      playersListEl.innerHTML='';
+      const filtered = INITIAL_PLAYERS.filter(p=>filter==='all' || p.tier===filter);
+      filtered.forEach(p=>{
+        const el = document.createElement('div'); el.className='player';
+        el.innerHTML = `<div class="avatar">${p.name.split(' ').map(s=>s[0]).slice(0,2).join('')}</div><div>${p.name}</div><div class="pmeta">${p.tier}</div>`;
+        el.addEventListener('click',()=>{ selectedPlayerId = p.name; document.getElementById('selected-name').textContent=p.name; document.getElementById('selected-tier').textContent=p.tier; });
+        playersListEl.appendChild(el);
+      });
+    }
+
+    tierFilterEl.addEventListener('change',renderPlayers);
+
+    wheelSpinBtn.addEventListener('click',()=>{
+      const filter = tierFilterEl.value;
+      const filtered = INITIAL_PLAYERS.filter(p=>filter==='all'||p.tier===filter);
+      if(filtered.length===0) return;
+      const randomIndex = Math.floor(Math.random()*filtered.length);
+      const selected = filtered[randomIndex];
+      selectedPlayerId = selected.name;
+      document.getElementById('selected-name').textContent = selected.name;
+      document.getElementById('selected-tier').textContent = selected.tier;
+    });
+
+    renderPlayers();
+  </script>
+</body>
+</html>
