@@ -1,0 +1,362 @@
+{
+  "captains": [
+    {
+      "name": "Zawad",
+      "credits": 100,
+      "roster": [
+        "Semanto",
+        "Rafi",
+        "Moon",
+        "Salty"
+      ],
+      "purchases": {
+        "1": "Salty",
+        "3": "Moon",
+        "4": "Rafi",
+        "5": "Semanto"
+      }
+    },
+    {
+      "name": "Ponir",
+      "credits": 20,
+      "roster": [
+        "Hridoy",
+        "Swaccho",
+        "Joy",
+        "Anik"
+      ],
+      "purchases": {
+        "1": "Anik",
+        "3": "Joy",
+        "4": "Swaccho",
+        "5": "Hridoy"
+      }
+    },
+    {
+      "name": "Rohan",
+      "credits": 300,
+      "roster": [
+        "Tama",
+        "Rizwan",
+        "Naif",
+        "H Rafi"
+      ],
+      "purchases": {
+        "1": "H Rafi",
+        "3": "Naif",
+        "4": "Rizwan",
+        "5": "Tama"
+      }
+    },
+    {
+      "name": "Arique",
+      "credits": 40,
+      "roster": [
+        "Nafi",
+        "Rhaiyan",
+        "Amit",
+        "Digonto"
+      ],
+      "purchases": {
+        "1": "Digonto",
+        "3": "Amit",
+        "4": "Rhaiyan",
+        "5": "Nafi"
+      }
+    }
+  ],
+  "players": [
+    {
+      "name": "Digonto",
+      "tier": 1,
+      "sold": true,
+      "unsold": false,
+      "owner": "Arique",
+      "stats": {
+        "dmg": 93,
+        "scr": 92,
+        "clu": 94,
+        "cms": 97,
+        "ast": 91,
+        "hs": 96
+      },
+      "roles": [
+        "Initiator",
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Anik",
+      "tier": 1,
+      "sold": true,
+      "unsold": false,
+      "owner": "Ponir",
+      "stats": {
+        "dmg": 96,
+        "scr": 93,
+        "clu": 96,
+        "cms": 93,
+        "ast": 93,
+        "hs": 97
+      },
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "H Rafi",
+      "tier": 1,
+      "sold": true,
+      "unsold": false,
+      "owner": "Rohan",
+      "stats": {
+        "dmg": 91,
+        "scr": 91,
+        "clu": 91,
+        "cms": 99,
+        "ast": 98,
+        "hs": 93
+      },
+      "roles": [
+        "Initiator"
+      ]
+    },
+    {
+      "name": "Salty",
+      "tier": 1,
+      "sold": true,
+      "unsold": false,
+      "owner": "Zawad",
+      "stats": {
+        "dmg": 97,
+        "scr": 91,
+        "clu": 91,
+        "cms": 92,
+        "ast": 95,
+        "hs": 98
+      },
+      "roles": [
+        "Duelist",
+        "Controller"
+      ]
+    },
+    {
+      "name": "Amit",
+      "tier": 3,
+      "sold": true,
+      "unsold": false,
+      "owner": "Arique",
+      "stats": {
+        "dmg": 90,
+        "scr": 88,
+        "clu": 86,
+        "cms": 84,
+        "ast": 80,
+        "hs": 89
+      },
+      "roles": [
+        "Initiator"
+      ]
+    },
+    {
+      "name": "Moon",
+      "tier": 3,
+      "sold": true,
+      "unsold": false,
+      "owner": "Zawad",
+      "stats": {
+        "dmg": 86,
+        "scr": 87,
+        "clu": 88,
+        "cms": 85,
+        "ast": 84,
+        "hs": 86
+      },
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Joy",
+      "tier": 3,
+      "sold": true,
+      "unsold": false,
+      "owner": "Ponir",
+      "stats": {
+        "dmg": 84,
+        "scr": 82,
+        "clu": 85,
+        "cms": 88,
+        "ast": 90,
+        "hs": 80
+      },
+      "roles": [
+        "Controller"
+      ]
+    },
+    {
+      "name": "Naif",
+      "tier": 3,
+      "sold": true,
+      "unsold": false,
+      "owner": "Rohan",
+      "stats": {
+        "dmg": 88,
+        "scr": 85,
+        "clu": 89,
+        "cms": 82,
+        "ast": 78,
+        "hs": 87
+      },
+      "roles": [
+        "Duelist"
+      ]
+    },
+    {
+      "name": "Rafi",
+      "tier": 4,
+      "sold": true,
+      "unsold": false,
+      "owner": "Zawad",
+      "stats": {
+        "dmg": 80,
+        "scr": 79,
+        "clu": 77,
+        "cms": 80,
+        "ast": 76,
+        "hs": 78
+      },
+      "roles": [
+        "Sentinel",
+        "Controller"
+      ]
+    },
+    {
+      "name": "Swaccho",
+      "tier": 4,
+      "sold": true,
+      "unsold": false,
+      "owner": "Ponir",
+      "stats": {
+        "dmg": 78,
+        "scr": 77,
+        "clu": 80,
+        "cms": 82,
+        "ast": 79,
+        "hs": 75
+      },
+      "roles": [
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Rhaiyan",
+      "tier": 4,
+      "sold": true,
+      "unsold": false,
+      "owner": "Arique",
+      "stats": {
+        "dmg": 82,
+        "scr": 81,
+        "clu": 79,
+        "cms": 77,
+        "ast": 74,
+        "hs": 80
+      },
+      "roles": [
+        "Sentinel"
+      ]
+    },
+    {
+      "name": "Rizwan",
+      "tier": 4,
+      "sold": true,
+      "unsold": false,
+      "owner": "Rohan",
+      "stats": {
+        "dmg": 79,
+        "scr": 78,
+        "clu": 76,
+        "cms": 79,
+        "ast": 80,
+        "hs": 77
+      },
+      "roles": [
+        "Controller"
+      ]
+    },
+    {
+      "name": "Tama",
+      "tier": 5,
+      "sold": true,
+      "unsold": false,
+      "owner": "Rohan",
+      "stats": {
+        "dmg": 75,
+        "scr": 73,
+        "clu": 70,
+        "cms": 76,
+        "ast": 72,
+        "hs": 74
+      },
+      "roles": [
+        "Sova"
+      ]
+    },
+    {
+      "name": "Semanto",
+      "tier": 5,
+      "sold": true,
+      "unsold": false,
+      "owner": "Zawad",
+      "stats": {
+        "dmg": 72,
+        "scr": 71,
+        "clu": 69,
+        "cms": 74,
+        "ast": 70,
+        "hs": 73
+      },
+      "roles": [
+        "Sage"
+      ]
+    },
+    {
+      "name": "Nafi",
+      "tier": 5,
+      "sold": true,
+      "unsold": false,
+      "owner": "Arique",
+      "stats": {
+        "dmg": 70,
+        "scr": 69,
+        "clu": 68,
+        "cms": 72,
+        "ast": 71,
+        "hs": 70
+      },
+      "roles": [
+        "Flex"
+      ]
+    },
+    {
+      "name": "Hridoy",
+      "tier": 5,
+      "sold": true,
+      "unsold": false,
+      "owner": "Ponir",
+      "stats": {
+        "dmg": 73,
+        "scr": 72,
+        "clu": 71,
+        "cms": 75,
+        "ast": 73,
+        "hs": 72
+      },
+      "roles": [
+        "Flex"
+      ]
+    }
+  ],
+  "timestamp": "2025-11-14T17:00:04.529Z"
+}
