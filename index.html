@@ -146,16 +146,37 @@ header .subtitle {
   background:linear-gradient(180deg,#38bdf8,#22c55e);
 }
 
-/* GRID */
+/* MAIN GRID – captains left, preview top-right, auction bottom-right */
 
 main {
   display:grid;
-  grid-template-columns: minmax(0,1.05fr) minmax(0,1.05fr);
+  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+  grid-template-rows: minmax(0,1fr) auto;
+  grid-template-areas:
+    "captains preview"
+    "captains auction";
   gap:16px;
 }
 
+.captains-card { grid-area: captains; }
+
+.preview-card { 
+  grid-area: preview; 
+}
+
+.auction-card { 
+  grid-area: auction; 
+}
+
 @media(max-width:900px){
-  main { grid-template-columns:1fr; }
+  main {
+    grid-template-columns:1fr;
+    grid-template-rows:auto;
+    grid-template-areas:
+      "captains"
+      "preview"
+      "auction";
+  }
 }
 
 /* CAPTAINS */
@@ -198,36 +219,7 @@ main {
   align-self:flex-start;
 }
 
-/* CURRENT AUCTION LAYOUT */
-
-.current-auction-layout {
-  display:flex;
-  gap:18px;
-  align-items:flex-start;
-}
-
-.auction-left {
-  flex:1;
-  min-width:0;
-}
-
-.auction-right {
-  width:260px;
-  max-width:280px;
-  flex-shrink:0;
-}
-
-@media(max-width:900px){
-  .current-auction-layout {
-    flex-direction:column;
-  }
-  .auction-right {
-    width:100%;
-    max-width:none;
-  }
-}
-
-/* CURRENT PLAYER TEXT */
+/* CURRENT PLAYER TEXT (inside auction card) */
 
 .current-player-box {
   padding:14px 14px 10px;
@@ -402,7 +394,7 @@ button:active{
   box-shadow:0 0 18px rgba(56,189,248,0.75);
 }
 
-/* For preview card on right – not clickable */
+/* For preview card – not clickable */
 .auction-player-card {
   cursor:default;
   pointer-events:none;
@@ -604,48 +596,44 @@ label {
 </header>
 
 <main>
-  <!-- CAPTAINS -->
-  <section class="card">
+  <!-- CAPTAINS (LEFT, FULL HEIGHT) -->
+  <section class="card captains-card">
     <div class="card-title">Captains (Tier 2 – excluded from player pool)</div>
     <div id="captainList" class="captain-list"></div>
   </section>
 
-  <!-- CURRENT PLAYER & BIDDING -->
-  <section class="card">
+  <!-- PLAYER PREVIEW (RIGHT TOP, BIGGER) -->
+  <section class="card preview-card">
+    <div class="card-title">Player Preview</div>
+    <div id="currentPlayerPreview"></div>
+  </section>
+
+  <!-- CURRENT PLAYER & BIDDING (RIGHT BOTTOM) -->
+  <section class="card auction-card">
     <div class="card-title">Current Auction</div>
 
-    <div class="current-auction-layout">
-      <!-- LEFT: info + bidding -->
-      <div class="auction-left">
-        <div class="current-player-box" id="currentPlayerBox"></div>
+    <div class="current-player-box" id="currentPlayerBox"></div>
 
-        <div class="bid-box">
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-            <div style="flex:1;min-width:180px;">
-              <label>Captain</label><br>
-              <select id="captainSelect" style="width:100%;margin-top:4px;"></select>
-            </div>
-            <div style="flex:1;min-width:140px;">
-              <label>Bid Amount</label><br>
-              <input type="number" id="bidAmount" min="0" style="width:100%;margin-top:4px;"/>
-            </div>
-          </div>
-
-          <div style="margin-bottom:6px;">
-            <button class="btn-main" id="placeBidBtn">💰 Place / Raise Bid</button>
-            <button class="btn-secondary" id="sellBtn">✅ Complete Sale</button>
-            <button class="btn-danger" id="unsoldBtn">🚫 Mark Unsold</button>
-          </div>
-
-          <div id="currentBidText"></div>
-          <div id="bidHistory"></div>
+    <div class="bid-box">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:180px;">
+          <label>Captain</label><br>
+          <select id="captainSelect" style="width:100%;margin-top:4px;"></select>
+        </div>
+        <div style="flex:1;min-width:140px;">
+          <label>Bid Amount</label><br>
+          <input type="number" id="bidAmount" min="0" style="width:100%;margin-top:4px;"/>
         </div>
       </div>
 
-      <!-- RIGHT: current player preview card -->
-      <div class="auction-right">
-        <div id="currentPlayerPreview"></div>
+      <div style="margin-bottom:6px;">
+        <button class="btn-main" id="placeBidBtn">💰 Place / Raise Bid</button>
+        <button class="btn-secondary" id="sellBtn">✅ Complete Sale</button>
+        <button class="btn-danger" id="unsoldBtn">🚫 Mark Unsold</button>
       </div>
+
+      <div id="currentBidText"></div>
+      <div id="bidHistory"></div>
     </div>
   </section>
 </main>
@@ -839,6 +827,7 @@ let currentPlayer = null;
 let currentBid = null;  // { captain, amount }
 let bidHistory = [];
 let undoStack = [];
+let tier1SpinCount = 0;   // track Tier 1 spins for Salty-first rule
 
 function getCaptain(name){ return captains.find(c=>c.name===name); }
 function getPlayer(name){ return players.find(p=>p.name===name); }
@@ -910,7 +899,7 @@ function renderCurrentPlayer(){
 
   const t = currentPlayer.tier;
 
-  // left info
+  // auction panel info
   box.innerHTML = `
     <div class="current-name">${currentPlayer.name}</div>
     <div class="current-meta">
@@ -1232,22 +1221,38 @@ function spinWheel(){
     return;
   }
 
-  
-  let candidateIndices;
-  if (tier === 1) {
-    candidateIndices = wheelPlayers
-      .map((p, idx) => p.name === "H Rafi" ? null : idx)
-      .filter(idx => idx !== null);
+  let winnerIndex;
 
-    if (candidateIndices.length === 0) {
-      // only H Rafi left
-      candidateIndices = [0];
+  if (tier === 1) {
+    // -------- Tier 1 special behaviour --------
+    const saltyIndex = wheelPlayers.findIndex(p => p.name === "Salty");
+    const hRafiIndex = wheelPlayers.findIndex(p => p.name === "H Rafi");
+
+    if (tier1SpinCount === 0 && saltyIndex !== -1) {
+      // First Tier 1 spin → always Salty
+      winnerIndex = saltyIndex;
+    } else {
+      // After first spin, keep H Rafi last
+      const nonHRafiIndices = wheelPlayers
+        .map((p, idx) => p.name === "H Rafi" ? null : idx)
+        .filter(idx => idx !== null);
+
+      let candidateIndices;
+      if (nonHRafiIndices.length > 0) {
+        candidateIndices = nonHRafiIndices;  // anyone except H Rafi
+      } else {
+        candidateIndices = [0];              // only H Rafi left
+      }
+      winnerIndex = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
     }
+
+    tier1SpinCount++;
   } else {
-    candidateIndices = wheelPlayers.map((_, idx) => idx);
+    // other tiers: normal random
+    const candidateIndices = wheelPlayers.map((_, idx) => idx);
+    winnerIndex = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
   }
 
-  const winnerIndex = candidateIndices[Math.floor(Math.random() * candidateIndices.length)];
   const winner = wheelPlayers[winnerIndex];
 
   // rotation math: pointer is on the RIGHT side (angle = 0 rad)
