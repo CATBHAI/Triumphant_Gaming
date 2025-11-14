@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Triumphant Tournament Auction</title>
+<title>Triumphant Tournament Auction – Tiered View</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -162,30 +162,72 @@ main {
 
 .captain-list {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:10px;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:12px;
 }
 
 .captain {
-  padding:10px 12px;
+  padding:12px;
   border-radius:14px;
   background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(15,23,42,0.75));
   border:1px solid rgba(31,41,55,0.9);
   box-shadow:0 10px 24px rgba(15,23,42,0.6);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
 }
 
-.captain-name { font-weight:600; }
-.credits { color:var(--accent); font-weight:600; font-size:0.85rem; margin-top:3px; }
+.captain-image {
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid rgba(30,64,175,0.8);
+}
+
+.captain-name { font-weight:600; align-self:flex-start; }
+.credits { color:var(--accent); font-weight:600; font-size:0.85rem; margin-top:2px; align-self:flex-start; }
 
 .captain small {
   display:block;
-  margin-top:8px;
+  margin-top:4px;
   font-size:0.72rem;
   color:var(--muted);
   line-height:1.4;
+  align-self:flex-start;
 }
 
-/* CURRENT PLAYER */
+/* CURRENT AUCTION LAYOUT */
+
+.current-auction-layout {
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+}
+
+.auction-left {
+  flex:1;
+  min-width:0;
+}
+
+.auction-right {
+  width:260px;
+  max-width:280px;
+  flex-shrink:0;
+}
+
+@media(max-width:900px){
+  .current-auction-layout {
+    flex-direction:column;
+  }
+  .auction-right {
+    width:100%;
+    max-width:none;
+  }
+}
+
+/* CURRENT PLAYER TEXT */
 
 .current-player-box {
   padding:14px 14px 10px;
@@ -281,22 +323,55 @@ button:active{
   color:var(--muted);
 }
 
-/* PLAYER GRID */
+/* TIERED PLAYER LIST */
+
+.tiers-wrapper {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:14px;
+}
+
+.tier-block {
+  background:linear-gradient(145deg,rgba(15,23,42,0.98),rgba(15,23,42,0.85));
+  border-radius:16px;
+  border:1px solid rgba(30,64,175,0.8);
+  padding:10px 11px 12px;
+}
+
+.tier-block-title {
+  font-size:0.9rem;
+  font-weight:600;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.tier-block-title span {
+  font-size:0.74rem;
+  color:var(--muted);
+}
+
+/* PLAYER GRID INSIDE TIER */
 
 .players-grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px;
+  gap:9px;
 }
 
 .player-card {
   background:linear-gradient(135deg,rgba(15,23,42,0.95),rgba(15,23,42,0.8));
   border:1px solid rgba(31,41,55,0.95);
   border-radius:12px;
-  padding:10px 11px;
+  padding:8px 8px 9px;
   cursor:pointer;
   transition:0.14s;
   position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  overflow:hidden;
 }
 
 .player-card::after{
@@ -327,17 +402,94 @@ button:active{
   box-shadow:0 0 18px rgba(56,189,248,0.75);
 }
 
+/* For preview card on right – not clickable */
+.auction-player-card {
+  cursor:default;
+  pointer-events:none;
+}
+
+/* PLAYER IMAGE */
+
+.player-image {
+  width:100%;
+  aspect-ratio:4/3;
+  border-radius:10px;
+  object-fit:cover;
+  background:#020617;
+  border:1px solid rgba(30,64,175,0.8);
+}
+
+/* PLAYER TEXT */
+
 .player-card-title{
   font-size:0.9rem;
   font-weight:500;
 }
+
 .player-card-sub{
-  font-size:0.74rem;
+  font-size:0.72rem;
   color:var(--muted);
 }
+
+.player-tier-rating {
+  font-size:0.72rem;
+  padding:2px 8px;
+  border-radius:999px;
+  align-self:flex-start;
+  margin-top:2px;
+  background:rgba(56,189,248,0.16);
+  border:1px solid rgba(56,189,248,0.6);
+}
+
+/* status line at bottom */
 .player-card-status{
-  margin-top:4px;
-  font-size:0.74rem;
+  margin-top:2px;
+  font-size:0.72rem;
+}
+
+/* PLAYER STATS (DMG, SCR, CLU, CMS, AST, HS) */
+
+.player-stats-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:6px;
+}
+
+.stat-pill {
+  font-size:0.68rem;
+  padding:2px 6px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.9);
+  border:1px solid rgba(55,65,81,0.9);
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+
+.stat-pill span {
+  color:var(--muted);
+}
+
+.stat-pill strong {
+  font-weight:600;
+}
+
+/* ROLES */
+
+.player-roles-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:6px;
+}
+
+.player-role-pill {
+  font-size:0.68rem;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(56,189,248,0.12);
+  border:1px solid rgba(56,189,248,0.6);
 }
 
 /* SPIN WHEEL */
@@ -462,36 +614,78 @@ label {
   <section class="card">
     <div class="card-title">Current Auction</div>
 
-    <div class="current-player-box" id="currentPlayerBox"></div>
+    <div class="current-auction-layout">
+      <!-- LEFT: info + bidding -->
+      <div class="auction-left">
+        <div class="current-player-box" id="currentPlayerBox"></div>
 
-    <div class="bid-box">
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-        <div style="flex:1;min-width:180px;">
-          <label>Captain</label><br>
-          <select id="captainSelect" style="width:100%;margin-top:4px;"></select>
-        </div>
-        <div style="flex:1;min-width:140px;">
-          <label>Bid Amount</label><br>
-          <input type="number" id="bidAmount" min="0" style="width:100%;margin-top:4px;"/>
+        <div class="bid-box">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+            <div style="flex:1;min-width:180px;">
+              <label>Captain</label><br>
+              <select id="captainSelect" style="width:100%;margin-top:4px;"></select>
+            </div>
+            <div style="flex:1;min-width:140px;">
+              <label>Bid Amount</label><br>
+              <input type="number" id="bidAmount" min="0" style="width:100%;margin-top:4px;"/>
+            </div>
+          </div>
+
+          <div style="margin-bottom:6px;">
+            <button class="btn-main" id="placeBidBtn">💰 Place / Raise Bid</button>
+            <button class="btn-secondary" id="sellBtn">✅ Complete Sale</button>
+            <button class="btn-danger" id="unsoldBtn">🚫 Mark Unsold</button>
+          </div>
+
+          <div id="currentBidText"></div>
+          <div id="bidHistory"></div>
         </div>
       </div>
 
-      <div style="margin-bottom:6px;">
-        <button class="btn-main" id="placeBidBtn">💰 Place / Raise Bid</button>
-        <button class="btn-secondary" id="sellBtn">✅ Complete Sale</button>
-        <button class="btn-danger" id="unsoldBtn">🚫 Mark Unsold</button>
+      <!-- RIGHT: current player preview card -->
+      <div class="auction-right">
+        <div id="currentPlayerPreview"></div>
       </div>
-
-      <div id="currentBidText"></div>
-      <div id="bidHistory"></div>
     </div>
   </section>
 </main>
 
-<!-- PLAYER GRID -->
+<!-- PLAYER GRID – SEPARATED BY TIER -->
 <section class="card">
-  <div class="card-title">Players</div>
-  <div id="playersGrid" class="players-grid"></div>
+  <div class="card-title">Players by Tier</div>
+  <div class="tiers-wrapper">
+    <div class="tier-block">
+      <div class="tier-block-title">
+        <span>Tier 1</span>
+        <span>High value • S Tier</span>
+      </div>
+      <div id="tier1Grid" class="players-grid"></div>
+    </div>
+
+    <div class="tier-block">
+      <div class="tier-block-title">
+        <span>Tier 3</span>
+        <span>Strong picks • A Tier</span>
+      </div>
+      <div id="tier3Grid" class="players-grid"></div>
+    </div>
+
+    <div class="tier-block">
+      <div class="tier-block-title">
+        <span>Tier 4</span>
+        <span>Solid squad • B Tier</span>
+      </div>
+      <div id="tier4Grid" class="players-grid"></div>
+    </div>
+
+    <div class="tier-block">
+      <div class="tier-block-title">
+        <span>Tier 5</span>
+        <span>Hidden gems • C Tier</span>
+      </div>
+      <div id="tier5Grid" class="players-grid"></div>
+    </div>
+  </div>
 </section>
 
 <!-- SPIN WHEEL -->
@@ -531,6 +725,14 @@ const tiersConfig = {
   5: { minBid: 100, inc: 20, penalty: 100 }
 };
 
+// "S tier" style rating labels for each numeric tier
+const tierLabels = {
+  1: "S Tier",
+  3: "A Tier",
+  4: "B Tier",
+  5: "C Tier"
+};
+
 const captains = [
   { name: "Zawad", credits: 2000, roster: [], purchases:{1:null,3:null,4:null,5:null}},
   { name: "Ponir", credits: 2000, roster: [], purchases:{1:null,3:null,4:null,5:null}},
@@ -538,27 +740,95 @@ const captains = [
   { name: "Arique", credits: 2000, roster: [], purchases:{1:null,3:null,4:null,5:null}}
 ];
 
-// Auction pool (NO Tier 2)
+// Players with per-player stats + roles
 const players = [
-  {name:"Digonto", tier:1, sold:false, unsold:false, owner:null},
-  {name:"Anik", tier:1, sold:false, unsold:false, owner:null},
-  {name:"H Rafi", tier:1, sold:false, unsold:false, owner:null},
-  {name:"Salty", tier:1, sold:false, unsold:false, owner:null},
+  // Tier 1 – S Tier
+  {
+    name: "Digonto", tier: 1, sold: false, unsold: false, owner: null,
+    stats: { dmg: 93, scr: 92, clu: 94, cms: 97, ast: 91, hs: 96 },
+    roles: ["Initiator", "Duelist"]
+  },
+  {
+    name: "Anik", tier: 1, sold: false, unsold: false, owner: null,
+    stats: { dmg: 96, scr: 93, clu: 96, cms: 93, ast: 93, hs: 97 },
+    roles: ["Duelist"]
+  },
+  {
+    name: "H Rafi", tier: 1, sold: false, unsold: false, owner: null,
+    stats: { dmg: 91, scr: 91, clu: 91, cms: 99, ast: 98, hs: 93 },
+    roles: ["Initiator"]
+  },
+  {
+    name: "Salty", tier: 1, sold: false, unsold: false, owner: null,
+    stats: { dmg: 97, scr: 91, clu: 91, cms: 92, ast: 95, hs: 98 },
+    roles: ["Duelist", "Controller"]
+  },
 
-  {name:"Amit", tier:3, sold:false, unsold:false, owner:null},
-  {name:"Moon", tier:3, sold:false, unsold:false, owner:null},
-  {name:"Joy", tier:3, sold:false, unsold:false, owner:null},
-  {name:"Naif", tier:3, sold:false, unsold:false, owner:null},
+  // Tier 3 – A Tier
+  {
+    name: "Amit", tier: 3, sold: false, unsold: false, owner: null,
+    stats: { dmg: 90, scr: 88, clu: 86, cms: 84, ast: 80, hs: 89 },
+    roles: ["Initiator"]
+  },
+  {
+    name: "Moon", tier: 3, sold: false, unsold: false, owner: null,
+    stats: { dmg: 86, scr: 87, clu: 88, cms: 85, ast: 84, hs: 86 },
+    roles: ["Duelist"]
+  },
+  {
+    name: "Joy", tier: 3, sold: false, unsold: false, owner: null,
+    stats: { dmg: 84, scr: 82, clu: 85, cms: 88, ast: 90, hs: 80 },
+    roles: ["Controller"]
+  },
+  {
+    name: "Naif", tier: 3, sold: false, unsold: false, owner: null,
+    stats: { dmg: 88, scr: 85, clu: 89, cms: 82, ast: 78, hs: 87 },
+    roles: ["Duelist"]
+  },
 
-  {name:"Rafi", tier:4, sold:false, unsold:false, owner:null},
-  {name:"Swaccho", tier:4, sold:false, unsold:false, owner:null},
-  {name:"Rhaiyan", tier:4, sold:false, unsold:false, owner:null},
-  {name:"Rizwan", tier:4, sold:false, unsold:false, owner:null},
+  // Tier 4 – B Tier
+  {
+    name: "Rafi", tier: 4, sold: false, unsold: false, owner: null,
+    stats: { dmg: 80, scr: 79, clu: 77, cms: 80, ast: 76, hs: 78 },
+    roles: ["Sentinel", "Controller"]
+  },
+  {
+    name: "Swaccho", tier: 4, sold: false, unsold: false, owner: null,
+    stats: { dmg: 78, scr: 77, clu: 80, cms: 82, ast: 79, hs: 75 },
+    roles: ["Sentinel"]
+  },
+  {
+    name: "Rhaiyan", tier: 4, sold: false, unsold: false, owner: null,
+    stats: { dmg: 82, scr: 81, clu: 79, cms: 77, ast: 74, hs: 80 },
+    roles: ["Sentinel"]
+  },
+  {
+    name: "Rizwan", tier: 4, sold: false, unsold: false, owner: null,
+    stats: { dmg: 79, scr: 78, clu: 76, cms: 79, ast: 80, hs: 77 },
+    roles: ["Controller"]
+  },
 
-  {name:"Tama", tier:5, sold:false, unsold:false, owner:null},
-  {name:"Semanto", tier:5, sold:false, unsold:false, owner:null},
-  {name:"Nafi", tier:5, sold:false, unsold:false, owner:null},
-  {name:"Hridoy", tier:5, sold:false, unsold:false, owner:null}
+  // Tier 5 – C Tier
+  {
+    name: "Tama", tier: 5, sold: false, unsold: false, owner: null,
+    stats: { dmg: 75, scr: 73, clu: 70, cms: 76, ast: 72, hs: 74 },
+    roles: ["Sova"]
+  },
+  {
+    name: "Semanto", tier: 5, sold: false, unsold: false, owner: null,
+    stats: { dmg: 72, scr: 71, clu: 69, cms: 74, ast: 70, hs: 73 },
+    roles: ["Sage"]
+  },
+  {
+    name: "Nafi", tier: 5, sold: false, unsold: false, owner: null,
+    stats: { dmg: 70, scr: 69, clu: 68, cms: 72, ast: 71, hs: 70 },
+    roles: ["Flex"]
+  },
+  {
+    name: "Hridoy", tier: 5, sold: false, unsold: false, owner: null,
+    stats: { dmg: 73, scr: 72, clu: 71, cms: 75, ast: 73, hs: 72 },
+    roles: ["Flex"]
+  }
 ];
 
 /* ===========================
@@ -574,6 +844,12 @@ function getCaptain(name){ return captains.find(c=>c.name===name); }
 function getPlayer(name){ return players.find(p=>p.name===name); }
 function currency(n){ return n+" TK"; }
 
+// helper to get image filename: lowercase, no spaces
+function playerImageSrc(name){
+  const lower = name.toLowerCase().replace(/\s+/g,"");
+  return `playerPics/${lower}.png`;
+}
+
 /* ===========================
    RENDER CAPTAINS
 =========================== */
@@ -587,6 +863,7 @@ function renderCaptains(){
     card.className = "captain";
 
     card.innerHTML = `
+      <img class="captain-image" src="${playerImageSrc(c.name)}" alt="${c.name}">
       <div class="captain-name">${c.name}</div>
       <div class="credits">${currency(c.credits)}</div>
       <small>
@@ -616,21 +893,70 @@ function renderCaptains(){
 
 function renderCurrentPlayer(){
   const box = document.getElementById("currentPlayerBox");
+  const preview = document.getElementById("currentPlayerPreview");
+
   if (!currentPlayer){
     box.innerHTML = `<div style="color:var(--muted);font-size:0.9rem;">No player selected yet. Spin the wheel or click a card.</div>`;
     document.getElementById("currentBidText").textContent = "";
     document.getElementById("bidHistory").innerHTML = "";
+
+    if (preview){
+      preview.innerHTML = `<div style="color:var(--muted);font-size:0.85rem;padding:10px;">
+        Player card preview will appear here when a player is selected.
+      </div>`;
+    }
     return;
   }
 
   const t = currentPlayer.tier;
 
+  // left info
   box.innerHTML = `
     <div class="current-name">${currentPlayer.name}</div>
     <div class="current-meta">
-      Tier ${t} • Base ${currency(tiersConfig[t].minBid)} • Min Inc ${currency(tiersConfig[t].inc)}
+      Tier ${t} • ${tierLabels[t] || ""} • Base ${currency(tiersConfig[t].minBid)} • Min Inc ${currency(tiersConfig[t].inc)}
     </div>
   `;
+
+  // right preview card with stats + roles
+  if (preview){
+    const p = currentPlayer;
+    const s = p.stats || {};
+    const dmg = s.dmg ?? "--";
+    const scr = s.scr ?? "--";
+    const clu = s.clu ?? "--";
+    const cms = s.cms ?? "--";
+    const ast = s.ast ?? "--";
+    const hs  = s.hs  ?? "--";
+    const roles = Array.isArray(p.roles) ? p.roles : [];
+
+    preview.innerHTML = `
+      <div class="player-card auction-player-card">
+        <img class="player-image" src="${playerImageSrc(p.name)}" alt="${p.name}">
+        <div class="player-card-title">${p.name}</div>
+        <div class="player-card-sub">Tier ${p.tier}</div>
+        <div class="player-tier-rating">Tier Rating: ${tierLabels[p.tier] || "Unknown"}</div>
+        <div class="player-stats-row">
+          <div class="stat-pill"><span>DMG</span><strong>${dmg}</strong></div>
+          <div class="stat-pill"><span>SCR</span><strong>${scr}</strong></div>
+          <div class="stat-pill"><span>CLU</span><strong>${clu}</strong></div>
+          <div class="stat-pill"><span>CMS</span><strong>${cms}</strong></div>
+          <div class="stat-pill"><span>AST</span><strong>${ast}</strong></div>
+          <div class="stat-pill"><span>HS</span><strong>${hs}</strong></div>
+        </div>
+        ${
+          roles.length
+            ? `<div class="player-roles-row">
+                 ${roles.map(r => `<span class="player-role-pill">${r}</span>`).join("")}
+               </div>`
+            : ""
+        }
+        <div class="player-card-status" style="margin-top:6px;">
+          ${p.sold ? "Sold to "+p.owner : p.unsold ? "Unsold" : "Up for Auction"}
+        </div>
+      </div>
+    `;
+  }
 
   renderBidBox();
 }
@@ -653,14 +979,24 @@ function renderBidBox(){
 }
 
 /* ===========================
-   RENDER PLAYER GRID
+   RENDER PLAYER GRID – BY TIER
 =========================== */
 
 function renderPlayers(){
-  const grid = document.getElementById("playersGrid");
-  grid.innerHTML = "";
+  const tierMap = {
+    1: document.getElementById("tier1Grid"),
+    3: document.getElementById("tier3Grid"),
+    4: document.getElementById("tier4Grid"),
+    5: document.getElementById("tier5Grid")
+  };
+
+  // clear all
+  Object.values(tierMap).forEach(el => { if(el) el.innerHTML = ""; });
 
   players.forEach(p=>{
+    const container = tierMap[p.tier];
+    if(!container) return;
+
     const card = document.createElement("div");
     card.className = "player-card";
 
@@ -668,9 +1004,12 @@ function renderPlayers(){
     if(p.unsold) card.classList.add("unsold");
     if(currentPlayer && currentPlayer.name === p.name) card.classList.add("current");
 
+    // Basic card (no stats here – stats only in preview)
     card.innerHTML = `
+      <img class="player-image" src="${playerImageSrc(p.name)}" alt="${p.name}">
       <div class="player-card-title">${p.name}</div>
       <div class="player-card-sub">Tier ${p.tier}</div>
+      <div class="player-tier-rating">Tier Rating: ${tierLabels[p.tier] || "Unknown"}</div>
       <div class="player-card-status">
         ${p.sold ? "Sold to "+p.owner : p.unsold ? "Unsold" : "Available"}
       </div>
@@ -687,7 +1026,7 @@ function renderPlayers(){
       });
     }
 
-    grid.appendChild(card);
+    container.appendChild(card);
   });
 }
 
@@ -884,7 +1223,7 @@ function spinWheel(){
 
   const tier = parseInt(document.getElementById("wheelTierSelect").value, 10);
 
-  // show ALL remaining players from this tier on the wheel (including H Rafi)
+  // show ALL remaining players from this tier on the wheel
   wheelPlayers = players.filter(p => p.tier === tier && !p.sold && !p.unsold);
 
   if (wheelPlayers.length === 0) {
@@ -1046,7 +1385,7 @@ renderCaptains();
 renderPlayers();
 renderCurrentPlayer();
 
-// initial wheel (show Tier 3 just as a default visual)
+// initial wheel (Tier 3 default visual)
 wheelPlayers = players.filter(p=>p.tier===3 && !p.sold && !p.unsold);
 drawWheel();
 </script>
