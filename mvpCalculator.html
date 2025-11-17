@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valorant MVP Calculator</title>
+<style>
+  :root{
+    --bg:#020617;
+    --card:#020617;
+    --border:#1f2937;
+    --accent:#38bdf8;
+    --accent-soft:rgba(56,189,248,0.1);
+    --muted:#9ca3af;
+    --text:#e5e7eb;
+    --danger:#f97373;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at top left, #1e293b 0, transparent 55%),
+      radial-gradient(circle at bottom right, #0f172a 0, #020617 55%);
+    color:var(--text);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    padding:20px;
+  }
+  h1{
+    margin-top:0;
+    font-size:1.7rem;
+  }
+  .subtitle{
+    font-size:0.9rem;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:18px;
+    box-shadow:0 18px 40px rgba(15,23,42,0.85);
+  }
+  .card-title{
+    font-weight:600;
+    margin-bottom:10px;
+    font-size:1.05rem;
+  }
+  label{
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  input, select, textarea{
+    background:#020617;
+    border:1px solid #374151;
+    color:var(--text);
+    border-radius:6px;
+    padding:4px 6px;
+    font-size:0.8rem;
+    width:100%;
+  }
+  textarea{
+    min-height:90px;
+    resize:vertical;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 1px rgba(56,189,248,0.6);
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.78rem;
+  }
+  th,td{
+    border:1px solid #111827;
+    padding:4px;
+    text-align:center;
+  }
+  th{
+    background:#030712;
+    font-weight:600;
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:flex-end;
+    margin-bottom:10px;
+  }
+  .controls > div{
+    min-width:160px;
+  }
+  button{
+    border:none;
+    border-radius:999px;
+    padding:7px 14px;
+    font-size:0.8rem;
+    cursor:pointer;
+    background:var(--accent);
+    color:#020617;
+    font-weight:600;
+    margin-right:6px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+  button:hover{
+    filter:brightness(1.1);
+  }
+  .btn-secondary{
+    background:var(--accent-soft);
+    color:var(--text);
+    border:1px solid var(--accent);
+  }
+  .results-list{
+    font-size:0.85rem;
+  }
+  .results-list div{
+    margin-bottom:3px;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns: minmax(0,2.2fr) minmax(0,1fr);
+    gap:18px;
+  }
+  @media(max-width:1000px){
+    .layout{
+      grid-template-columns:1fr;
+    }
+  }
+
+  /* MVP CARD */
+  .mvp-card{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .mvp-top{
+    display:flex;
+    gap:14px;
+    align-items:center;
+  }
+  .mvp-img-wrap{
+    width:150px;
+    height:150px;
+    border-radius:22px;
+    overflow:hidden;
+    border:2px solid rgba(56,189,248,0.9);
+    box-shadow:
+      0 0 25px rgba(56,189,248,0.8),
+      0 0 55px rgba(8,47,73,0.9);
+    background:#020617;
+    flex-shrink:0;
+  }
+  .mvp-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .mvp-main{
+    flex:1;
+  }
+  .mvp-name{
+    font-size:1.3rem;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .mvp-name span.crown{
+    font-size:1.3rem;
+  }
+  .mvp-meta{
+    font-size:0.82rem;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .mvp-points{
+    font-size:1rem;
+    margin-top:8px;
+  }
+  .mvp-breakdown{
+    font-size:0.8rem;
+    color:var(--muted);
+    line-height:1.5;
+    margin-top:4px;
+  }
+  .mvp-teams{
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .pill{
+    display:inline-block;
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,0.6);
+    font-size:0.72rem;
+    margin-right:4px;
+  }
+  .pill-tier{
+    border-color:rgba(56,189,248,0.7);
+    color:#7dd3fc;
+  }
+  .pill-mvp{
+    border-color:#22c55e;
+    color:#bbf7d0;
+  }
+  .empty-text{
+    font-size:0.82rem;
+    color:var(--muted);
+  }
+  .paste-help{
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Valorant MVP Calculator</h1>
+<div class="subtitle">
+  Enter stats for 10 players • Paste from clipboard • Click "Calculate & Show MVP" • Then export as JSON for your tournament log.
+</div>
+
+<!-- QUICK PASTE CARD -->
+<div class="card">
+  <div class="card-title">Quick Paste from Clipboard</div>
+  <div class="paste-help">
+    Paste rows from Excel / Sheets / Notepad here.<br>
+    Format per line:<br>
+    <strong>With tier:</strong> <code>Name, Tier, Kills, Exit, FK, FD, Assist, Clutch</code><br>
+    <strong>Without tier:</strong> <code>Name, Kills, Exit, FK, FD, Assist, Clutch</code> (tier stays as selected in table).
+  </div>
+  <textarea id="pasteArea" placeholder="Example:
+Salty,1,27,5,4,3,7,2
+Zawad,1,22,3,2,4,6,1"></textarea>
+  <div style="margin-top:8px;">
+    <button id="applyPasteBtn">📋 Paste into Table</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="controls">
+    <div>
+      <label for="matchName">Match Name</label><br>
+      <input type="text" id="matchName" placeholder="e.g. GroupA_UpperSemi_1">
+    </div>
+    <div>
+      <label for="teamASelect">Team A</label><br>
+      <select id="teamASelect">
+        <option value="">(Select Team A)</option>
+        <option value="Team Zawad (TEAM A)">Team Zawad (TEAM A)</option>
+        <option value="Team Rohan (TEAM B)">Team Rohan (TEAM B)</option>
+        <option value="Team Ponir (TEAM C)">Team Ponir (TEAM C)</option>
+        <option value="Team Arique (TEAM D)">Team Arique (TEAM D)</option>
+      </select>
+    </div>
+    <div>
+      <label for="teamBSelect">Team B</label><br>
+      <select id="teamBSelect">
+        <option value="">(Select Team B)</option>
+        <option value="Team Zawad (TEAM A)">Team Zawad (TEAM A)</option>
+        <option value="Team Rohan (TEAM B)">Team Rohan (TEAM B)</option>
+        <option value="Team Ponir (TEAM C)">Team Ponir (TEAM C)</option>
+        <option value="Team Arique (TEAM D)">Team Arique (TEAM D)</option>
+      </select>
+    </div>
+    <div>
+      <button id="calcBtn">⭐ Calculate & Show MVP</button>
+      <button id="exportBtn" class="btn-secondary">⬇ Export JSON</button>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Player Name</th>
+        <th>Tier</th>
+        <th>Kills</th>
+        <th>Exit Frags</th>
+        <th>First Kills</th>
+        <th>First Deaths</th>
+        <th>Assists</th>
+        <th>Clutched Rounds</th>
+        <th>Total Points</th>
+      </tr>
+    </thead>
+    <tbody id="playersBody">
+      <!-- rows added by JS -->
+    </tbody>
+  </table>
+</div>
+
+<div class="layout">
+  <!-- MVP SPOT -->
+  <div class="card">
+    <div class="card-title">MVP of the Match</div>
+    <div id="mvpContainer" class="mvp-card">
+      <div class="empty-text">No MVP yet. Fill the stats and click "Calculate & Show MVP".</div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div class="card">
+    <div class="card-title">Player Ranking (Highest to Lowest)</div>
+    <div id="results" class="results-list">
+      <div class="empty-text">Ranking will appear here after calculation.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ============== CONFIG ============== */
+
+  const tierMultiplier = {
+    1: 1.0,
+    2: 1.05,
+    3: 1.1,
+    4: 2.0,
+    5: 2.5
+  };
+
+  const tbody = document.getElementById('playersBody');
+
+  // Build 10 rows (fixed)
+  for(let i=1;i<=10;i++){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i}</td>
+      <td><input type="text" data-field="name" placeholder="Player ${i}"></td>
+      <td>
+        <select data-field="tier">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </td>
+      <td><input type="number" min="0" data-field="kills" value="0"></td>
+      <td><input type="number" min="0" data-field="exitFrags" value="0"></td>
+      <td><input type="number" min="0" data-field="firstKills" value="0"></td>
+      <td><input type="number" min="0" data-field="firstDeaths" value="0"></td>
+      <td><input type="number" min="0" data-field="assists" value="0"></td>
+      <td><input type="number" min="0" data-field="clutches" value="0"></td>
+      <td data-field="totalPoints">0</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function playerImageSrc(name){
+    const lower = (name || "").toLowerCase().replace(/\s+/g,"");
+    return `playerPics/${lower}.png`;
+  }
+
+  /* ============== CORE CALC ============== */
+
+  function getPlayersData(updateUI = true){
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const players = [];
+
+    rows.forEach((tr, index)=>{
+      const getVal = field => tr.querySelector(`[data-field="${field}"]`);
+
+      const name = (getVal('name').value || '').trim();
+      const tier = parseInt(getVal('tier').value, 10) || 1;
+      const kills = parseInt(getVal('kills').value, 10) || 0;
+      const exitFrags = parseInt(getVal('exitFrags').value, 10) || 0;
+      const firstKills = parseInt(getVal('firstKills').value, 10) || 0;
+      const firstDeaths = parseInt(getVal('firstDeaths').value, 10) || 0;
+      const assists = parseInt(getVal('assists').value, 10) || 0;
+      const clutches = parseInt(getVal('clutches').value, 10) || 0;
+
+      // ignore fully empty rows (no name and all zeros)
+      const hasData = name || kills || exitFrags || firstKills || firstDeaths || assists || clutches;
+      if(!hasData) return;
+
+      const mult = tierMultiplier[tier] || 1.0;
+
+      // Kill Points = (total kills - exit frags) * multiplier * 10
+      // Assist points = assist * multiplier * 10
+      // Clutch points = Clutch * 20 * Multiplier
+      // First kill points = First kill * multiplier * 10
+      // First Death Penalty = First death * 10
+      const killPoints = (kills - exitFrags) * mult * 10;
+      const assistPoints = assists * mult * 10;
+      const clutchPoints = clutches * 20 * mult;
+      const firstKillPoints = firstKills * mult * 10;
+      const firstDeathPenalty = firstDeaths * 10;
+
+      const totalPoints = killPoints + assistPoints + clutchPoints + firstKillPoints - firstDeathPenalty;
+
+      if(updateUI){
+        tr.querySelector('[data-field="totalPoints"]').textContent = totalPoints.toFixed(1);
+      }
+
+      players.push({
+        index: index + 1,
+        name: name || `Player ${index+1}`,
+        tier,
+        kills,
+        exitFrags,
+        firstKills,
+        firstDeaths,
+        assists,
+        clutches,
+        killPoints,
+        assistPoints,
+        clutchPoints,
+        firstKillPoints,
+        firstDeathPenalty,
+        totalPoints
+      });
+    });
+
+    return players;
+  }
+
+  function showRankingAndMVP(){
+    const players = getPlayersData(true);
+    const resultsDiv = document.getElementById('results');
+    const mvpContainer = document.getElementById('mvpContainer');
+
+    if(players.length === 0){
+      resultsDiv.innerHTML = `<div class="empty-text">No player data entered yet.</div>`;
+      mvpContainer.innerHTML = `<div class="empty-text">No MVP yet. Enter stats and calculate.</div>`;
+      return players;
+    }
+
+    const sorted = [...players].sort((a,b)=>b.totalPoints - a.totalPoints);
+    const mvp = sorted[0];
+
+    // Ranking list
+    resultsDiv.innerHTML = sorted.map((p, idx)=>`
+      <div>
+        <strong>#${idx+1}</strong> – ${p.name}
+        (Tier ${p.tier}) : <strong>${p.totalPoints.toFixed(1)} pts</strong>
+      </div>
+    `).join("");
+
+    const teamA = document.getElementById('teamASelect').value || "Team A";
+    const teamB = document.getElementById('teamBSelect').value || "Team B";
+
+    // MVP special spot
+    const imgSrc = playerImageSrc(mvp.name);
+
+    mvpContainer.innerHTML = `
+      <div class="mvp-top">
+        <div class="mvp-img-wrap">
+          <img src="${imgSrc}" alt="${mvp.name}" class="mvp-img" onerror="this.style.display='none';">
+        </div>
+        <div class="mvp-main">
+          <div class="mvp-name">
+            <span class="crown">👑</span>${mvp.name}
+          </div>
+          <div class="mvp-meta">
+            <span class="pill pill-mvp">MVP</span>
+            <span class="pill pill-tier">Tier ${mvp.tier} • Multiplier ${tierMultiplier[mvp.tier] || 1}</span>
+          </div>
+          <div class="mvp-points">
+            Total Points: <strong>${mvp.totalPoints.toFixed(1)}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="mvp-teams">
+        Team: <strong>${teamA}</strong> vs <strong>${teamB}</strong>
+      </div>
+      <div class="mvp-breakdown">
+        Kill Points: <strong>${mvp.killPoints.toFixed(1)}</strong><br>
+        Assist Points: <strong>${mvp.assistPoints.toFixed(1)}</strong><br>
+        Clutch Points: <strong>${mvp.clutchPoints.toFixed(1)}</strong><br>
+        First Kill Points: <strong>${mvp.firstKillPoints.toFixed(1)}</strong><br>
+        First Death Penalty: <strong>-${mvp.firstDeathPenalty.toFixed(1)}</strong>
+      </div>
+    `;
+
+    return players;
+  }
+
+  /* ============== QUICK PASTE HANDLER ============== */
+
+  document.getElementById('applyPasteBtn').addEventListener('click', ()=>{
+    const text = (document.getElementById('pasteArea').value || "").trim();
+    if(!text){
+      alert("Paste some stats into the box first.");
+      return;
+    }
+
+    const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l.length>0);
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    lines.slice(0, rows.length).forEach((line, idx)=>{
+      let parts = line.split(/\t|,/);
+      if(parts.length === 1){
+        parts = line.split(/\s+/);
+      }
+      parts = parts.map(p=>p.trim()).filter(p=>p.length>0);
+      if(parts.length < 2) return;
+
+      const row = rows[idx];
+      const nameInput = row.querySelector('[data-field="name"]');
+      const tierSelect = row.querySelector('[data-field="tier"]');
+      const killsInput = row.querySelector('[data-field="kills"]');
+      const exitInput = row.querySelector('[data-field="exitFrags"]');
+      const fkInput = row.querySelector('[data-field="firstKills"]');
+      const fdInput = row.querySelector('[data-field="firstDeaths"]');
+      const assistsInput = row.querySelector('[data-field="assists"]');
+      const clutchesInput = row.querySelector('[data-field="clutches"]');
+
+      if(parts.length >= 8){
+        // Name, Tier, Kills, Exit, FK, FD, Assist, Clutch
+        nameInput.value     = parts[0];
+        tierSelect.value    = parts[1];
+        killsInput.value    = parts[2] || 0;
+        exitInput.value     = parts[3] || 0;
+        fkInput.value       = parts[4] || 0;
+        fdInput.value       = parts[5] || 0;
+        assistsInput.value  = parts[6] || 0;
+        clutchesInput.value = parts[7] || 0;
+      } else if(parts.length === 7){
+        // Name, Kills, Exit, FK, FD, Assist, Clutch (no tier)
+        nameInput.value     = parts[0];
+        killsInput.value    = parts[1] || 0;
+        exitInput.value     = parts[2] || 0;
+        fkInput.value       = parts[3] || 0;
+        fdInput.value       = parts[4] || 0;
+        assistsInput.value  = parts[5] || 0;
+        clutchesInput.value = parts[6] || 0;
+      } else {
+        // Fallback: at least name + some numbers
+        nameInput.value     = parts[0];
+        killsInput.value    = parts[1] || 0;
+        exitInput.value     = parts[2] || 0;
+        fkInput.value       = parts[3] || 0;
+        fdInput.value       = parts[4] || 0;
+        assistsInput.value  = parts[5] || 0;
+        clutchesInput.value = parts[6] || 0;
+      }
+    });
+
+    // Optional: auto-calc after paste
+    showRankingAndMVP();
+  });
+
+  /* ============== BUTTONS ============== */
+
+  document.getElementById('calcBtn').addEventListener('click', ()=>{
+    showRankingAndMVP(); // calculate & show only, no export
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const matchNameRaw = (document.getElementById('matchName').value || "").trim();
+    if(!matchNameRaw){
+      alert("Please enter a Match Name for the JSON file.");
+      return;
+    }
+    const safeName = matchNameRaw.replace(/[^a-zA-Z0-9_\-]/g,'_');
+
+    const teamA = document.getElementById('teamASelect').value || "Team A";
+    const teamB = document.getElementById('teamBSelect').value || "Team B";
+
+    // ensure latest totals are calculated
+    const players = getPlayersData(true);
+    if(!players || players.length === 0){
+      alert("No player data to export.");
+      return;
+    }
+
+    // ranking
+    const sorted = [...players].sort((a,b)=>b.totalPoints - a.totalPoints);
+    const ranked = sorted.map((p, idx)=>({ rank: idx+1, ...p }));
+
+    const data = {
+      matchName: matchNameRaw,
+      teams: {
+        teamA,
+        teamB
+      },
+      rules: {
+        killPoints: "(total kills - exit frags) * multiplier * 10",
+        assistPoints: "assists * multiplier * 10",
+        clutchPoints: "clutches * 20 * multiplier",
+        firstKillPoints: "first kills * multiplier * 10",
+        firstDeathPenalty: "first deaths * 10",
+        tierMultiplier: {1:1,2:1.05,3:1.1,4:2,5:2.5}
+      },
+      players: ranked
+    };
+
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = safeName + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+
+</body>
+</html>
