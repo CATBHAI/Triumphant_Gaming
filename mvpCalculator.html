@@ -288,6 +288,7 @@ Zawad,1,22,3,2,4,6,1"></textarea>
         <th>First Deaths</th>
         <th>Assists</th>
         <th>Clutched Rounds</th>
+        <th>Spec Points (+/-)</th>
         <th>Total Points</th>
       </tr>
     </thead>
@@ -349,6 +350,7 @@ Zawad,1,22,3,2,4,6,1"></textarea>
       <td><input type="number" min="0" data-field="firstDeaths" value="0"></td>
       <td><input type="number" min="0" data-field="assists" value="0"></td>
       <td><input type="number" min="0" data-field="clutches" value="0"></td>
+      <td><input type="number" step="0.1" data-field="specPoints" value="0"></td>
       <td data-field="totalPoints">0</td>
     `;
     tbody.appendChild(tr);
@@ -376,25 +378,36 @@ Zawad,1,22,3,2,4,6,1"></textarea>
       const firstDeaths = parseInt(getVal('firstDeaths').value, 10) || 0;
       const assists = parseInt(getVal('assists').value, 10) || 0;
       const clutches = parseInt(getVal('clutches').value, 10) || 0;
+      const spectatorPoints = parseFloat(getVal('specPoints').value) || 0;
 
-      // ignore fully empty rows (no name and all zeros)
-      const hasData = name || kills || exitFrags || firstKills || firstDeaths || assists || clutches;
+      // ignore fully empty rows (no name and all zeros, including spec)
+      const hasData =
+        name ||
+        kills || exitFrags || firstKills || firstDeaths ||
+        assists || clutches || spectatorPoints;
       if(!hasData) return;
 
       const mult = tierMultiplier[tier] || 1.0;
 
       // Kill Points = (total kills - exit frags) * multiplier * 10
-      // Assist points = assist * multiplier * 10
+      // Assist points = assists * multiplier * 2.5 (your spec)
       // Clutch points = Clutch * 20 * Multiplier
       // First kill points = First kill * multiplier * 10
       // First Death Penalty = First death * 10
+      // Spectator points = manual +/- flat
       const killPoints = (kills - exitFrags) * mult * 10;
-      const assistPoints = assists * mult * 10;
+      const assistPoints = assists * mult * 2.5;
       const clutchPoints = clutches * 20 * mult;
       const firstKillPoints = firstKills * mult * 10;
       const firstDeathPenalty = firstDeaths * 10;
 
-      const totalPoints = killPoints + assistPoints + clutchPoints + firstKillPoints - firstDeathPenalty;
+      const totalPoints =
+        killPoints +
+        assistPoints +
+        clutchPoints +
+        firstKillPoints -
+        firstDeathPenalty +
+        spectatorPoints;
 
       if(updateUI){
         tr.querySelector('[data-field="totalPoints"]').textContent = totalPoints.toFixed(1);
@@ -410,6 +423,7 @@ Zawad,1,22,3,2,4,6,1"></textarea>
         firstDeaths,
         assists,
         clutches,
+        spectatorPoints,
         killPoints,
         assistPoints,
         clutchPoints,
@@ -436,7 +450,7 @@ Zawad,1,22,3,2,4,6,1"></textarea>
     const sorted = [...players].sort((a,b)=>b.totalPoints - a.totalPoints);
     const mvp = sorted[0];
 
-    // Ranking list
+    // Ranking list (clean – no spectator detail)
     resultsDiv.innerHTML = sorted.map((p, idx)=>`
       <div>
         <strong>#${idx+1}</strong> – ${p.name}
@@ -449,6 +463,9 @@ Zawad,1,22,3,2,4,6,1"></textarea>
 
     // MVP special spot
     const imgSrc = playerImageSrc(mvp.name);
+    const specStr = mvp.spectatorPoints >= 0
+      ? `+${mvp.spectatorPoints.toFixed(1)}`
+      : mvp.spectatorPoints.toFixed(1);
 
     mvpContainer.innerHTML = `
       <div class="mvp-top">
@@ -476,7 +493,8 @@ Zawad,1,22,3,2,4,6,1"></textarea>
         Assist Points: <strong>${mvp.assistPoints.toFixed(1)}</strong><br>
         Clutch Points: <strong>${mvp.clutchPoints.toFixed(1)}</strong><br>
         First Kill Points: <strong>${mvp.firstKillPoints.toFixed(1)}</strong><br>
-        First Death Penalty: <strong>-${mvp.firstDeathPenalty.toFixed(1)}</strong>
+        First Death Penalty: <strong>-${mvp.firstDeathPenalty.toFixed(1)}</strong><br>
+        Spectator Points: <strong>${specStr}</strong>
       </div>
     `;
 
@@ -512,6 +530,7 @@ Zawad,1,22,3,2,4,6,1"></textarea>
       const fdInput = row.querySelector('[data-field="firstDeaths"]');
       const assistsInput = row.querySelector('[data-field="assists"]');
       const clutchesInput = row.querySelector('[data-field="clutches"]');
+      // spectator points NOT part of paste – manual only
 
       if(parts.length >= 8){
         // Name, Tier, Kills, Exit, FK, FD, Assist, Clutch
@@ -584,10 +603,11 @@ Zawad,1,22,3,2,4,6,1"></textarea>
       },
       rules: {
         killPoints: "(total kills - exit frags) * multiplier * 10",
-        assistPoints: "assists * multiplier * 10",
+        assistPoints: "assists * multiplier * 2.5",
         clutchPoints: "clutches * 20 * multiplier",
         firstKillPoints: "first kills * multiplier * 10",
         firstDeathPenalty: "first deaths * 10",
+        spectatorPoints: "manual +/- bonus added directly",
         tierMultiplier: {1:1,2:1.05,3:1.1,4:2,5:2.5}
       },
       players: ranked
