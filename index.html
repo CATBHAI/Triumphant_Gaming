@@ -575,10 +575,59 @@ label {
   font-size:0.82rem;
   color:var(--muted);
 }
+.calc-btn {
+    padding: 15px 40px;
+    background: #0078ff;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+
+/* Hover */
+.calc-btn:hover {
+    background: #005fcc;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .calc-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+}
+.schd{
+    padding: 15px 40px;
+    background: red;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+
+/* Hover */
+.schd:hover {
+    background: green;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .schd {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+} 
+
 </style>
 </head>
 
 <body>
+  <a href="mvpCalculator.html" class="calc-btn">Calculate</a>
+    <a href="schedule.html" class="schd">Schedule</a>
 <div class="app">
 
 <header>
