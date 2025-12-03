@@ -34,57 +34,65 @@ digonto
 
 
 Exit Frag Map 
-zawad
+zawad 1
 semanto
-rafi
-moon
-salty
+rafi 1
+moon 3
+salty 1
 
-arique
-nafi 2
-rhaiyan
-amit
-digonto
+anik 1
+hridoy
+swaccho 1
+ponir 
+joy
+
+
 
 Clutch Map 
 zawad
 semanto
 rafi
 moon
-salty 1
+salty 
 
-arique
-nafi
-rhaiyan 
-amit 1
-digonto
+anik
+hridoy
+swaccho
+ponir 1
+joy
+
+
 
 
 Exit Frag Map 2
-zawad
+zawad 1
 semanto
 rafi
-moon 1
-salty
+moon 2
+salty 5
 
-arique
-nafi 
-rhaiyan
-amit
-digonto
+anik
+hridoy 1
+swaccho 4
+ponir 2
+joy 2
+
+
 
 Clutch Map 2
-zawad
+zawad 1
 semanto 1
 rafi
-moon 1
-salty 1
+moon 
+salty
 
-arique
-nafi
-rhaiyan 1
-amit 1
-digonto
+anik
+hridoy
+swaccho
+ponir
+joy
+
+
 
 
 Exit Frag Map 3
@@ -92,26 +100,26 @@ zawad
 semanto
 rafi
 moon 
-salty
-
-arique
-nafi 
-rhaiyan
-amit
-digonto
-
-Clutch Map 3
-zawad 1
-semanto 
-rafi
-moon 1
 salty 1
 
-arique
-nafi
-rhaiyan 
-amit 
-digonto
+anik
+hridoy
+swaccho
+ponir
+joy 3    
+
+Clutch Map 3
+zawad 
+semanto 1
+rafi
+moon 
+salty 
+
+anik 1
+hridoy
+swaccho
+ponir
+joy
 
 
 
@@ -131,7 +139,7 @@ nafi,5,7,2,0,2,1,0
 
 
 
-Player Ranking (Highest to Lowest) — Divided by 3
+Player Ranking SEMI FINALS
 
 #1 – rhaiyan (Tier 4) : 394.67 pts
 #2 – rafi (Tier 4) : 363.33 pts
@@ -144,4 +152,17 @@ Player Ranking (Highest to Lowest) — Divided by 3
 #9 – zawad (Tier 2) : 192.20 pts
 #10 – semanto (Tier 5) : 165.83 pts 
 
+
+Player Ranking FINALS
+
+#1 – hridoy (Tier 5) : 355.43 pts
+#2 – anik (Tier 1) : 278.33 pts
+#3 – ponir (Tier 2) : 272.17 pts
+#4 – rafi (Tier 4) : 270.00 pts
+#5 – moon (Tier 3) : 256.93 pts
+#6 – salty (Tier 1) : 219.17 pts
+#7 – zawad (Tier 2) : 217.20 pts
+#8 – semanto (Tier 5) : 179.60 pts
+#9 – swaccho (Tier 4) : 158.33 pts
+#10 – joy (Tier 3) : 154.93 pts
 
